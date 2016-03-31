@@ -3,15 +3,14 @@ import numpy as np
 import random
 from datetime import datetime
 from skimage.feature import hog
-
 class Data:
     '''
     This class loads the data and distributes it randomly into test/train sets
     '''
-    def __init__(self):
-        self.train_set,self.train_labels,self.test_set,self.test_labels = self.load()
+    def __init__(self,cell_size = (16,16)):
+        self.train_set,self.train_labels,self.test_set,self.test_labels = self.load(cell_size)
 
-    def load(self):
+    def load(self,cell_size = (16,16)):
         '''
         Generates a Data Set
 
@@ -65,7 +64,7 @@ class Data:
         for i in numbers:
             img =   np.array(training_data[i][1])
             img.shape = (28,28)
-            fd  =   hog(img)
+            fd, hog_image = hog(img, orientations=8, pixels_per_cell=cell_size,cells_per_block=(1, 1), visualise=True)
             training_set.append(fd)
             training_set_labels.append(training_data[i][0])
 
@@ -73,7 +72,7 @@ class Data:
         for i in range(len(test_data)):
             img = np.array(test_data[i])
             img.shape=(28,28)
-            fd = hog(img)
+            fd, hog_image = hog(img, orientations=8, pixels_per_cell=cell_size, cells_per_block=(1, 1), visualise=True)
             test_data_set.append(fd)
 
         print "Data Loading and Distribution Succesfully done"
