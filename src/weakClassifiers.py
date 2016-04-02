@@ -12,8 +12,9 @@ class DTC:
         else: c = 'gini'
         self.clf  = tree.DecisionTreeClassifier(criterion=c,max_depth=depth)
         self.clf.fit(train_set,train_labels)
+
 class AdaBoost:
-    def __init__(self, Data, NoOfClassifiers = 10,L=20000):
+    def __init__(self, Data, NoOfClassifiers = 10,L=5000):
         n=int(0.8*L)
         Data.learning_set=Data.learning_set[:L]
         Data.learning_set_labels=Data.learning_set_labels[:L]
@@ -29,14 +30,22 @@ class AdaBoost:
         for i in range(L):
             if str(self.BoostedPredictions[i]) == str(Data.learning_set_labels[i]):
                 self.BoostedScore += 1.0/(L*1.0)
+        print "Boosted Score ",self.BoostedScore
 
     def loss(self,true_label,predicted_label):
+        '''
+        loss function
+        Can be varied. Currently Binary
+        '''
         if true_label != predicted_label:
             return 1
         else:
             return 0
 
     def Boost(self,Data, NoOfClassifiers,train_set_size):
+        '''
+        Boosting Algorithm...
+        '''
         print "Boosting"
         L = len(Data.learning_set)
         p = [1.0/(1.0*L) for i in range(L)]
@@ -45,6 +54,7 @@ class AdaBoost:
             clf = DTC(X_train,y_train, depth = 5*(j+1))
             predictions = clf.clf.predict(Data.learning_set)
             self.models.append(clf)
+
             error = 1.0 - clf.clf.score(Data.learning_set,Data.learning_set_labels)
 
             if error > 0.5:
@@ -63,6 +73,10 @@ class AdaBoost:
                     p[i]=(1.0*p[i])/(1.0*z)
 
     def genTrainSet(self,Data, weights, train_set_size):
+        '''
+        Chooses a subset of the training set of size train_set_size
+        with a probability distribution~weights
+        '''
         indices = [i for i in range(len(Data.learning_set))]
         indexlist = [choice(indices, p=weights) for i in range(train_set_size)]
         X_train = []
@@ -73,6 +87,9 @@ class AdaBoost:
         return X_train,y_train
 
     def getPredictions(self,Data,NoOfClassifiers):
+        '''
+        Generates Predictions based on the Boosted Model
+        '''
         for i in range(len(Data.learning_set)):
             probvec=np.array([0 for t in range(NoOfClassifiers)],dtype='float64')
             for j in range(NoOfClassifiers):
@@ -94,3 +111,4 @@ f=open('Data.pkl','rb')
 D = pickle.load(f)
 f.close()
 e=AdaBoost(D)
+print e.BoostedScore
