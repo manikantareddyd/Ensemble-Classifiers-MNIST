@@ -64,7 +64,7 @@ class Data:
 
         print "Data Loading and Distribution Succesfully done"
 
-        # self.train_set = self.learning_set[:10000]
-        # self.train_labels = self.learning_set_labels[:10000]
-        # self.test_set = self.learning_set[10000:20000]
-        # self.test_labels = self.learning_set_labels[10000:20000]
+        self.train_set = self.learning_set[:10000]
+        self.train_labels = self.learning_set_labels[:10000]
+        self.test_set = self.learning_set[10000:20000]
+        self.test_labels = self.learning_set_labels[10000:20000]
