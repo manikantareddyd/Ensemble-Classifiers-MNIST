@@ -1,7 +1,7 @@
 from data import *
 from sklearn import tree
 from sklearn.ensemble import RandomForestClassifier
-
+from sklearn.ensemble import AdaBoostClassifier
 class DTC:
     def __init__(self,Data,depth,split='b',criterion='c'):
         if criterion == 'e': c = 'entropy'
@@ -22,6 +22,14 @@ class RFC:
         self.score = self.clf.score(Data.test_set,Data.test_labels)
         print self.score
 
+class AB:
+    def __init__(self,Data,NumOfEstimators):
+        self.clf = AdaBoostClassifier(n_estimators = NumOfEstimators)
+        self.clf.fit(Data.train_set,Data.train_labels)
+        self.score1 = self.clf.score(Data.train_set[:1000],Data.train_labels[:1000])
+        self.score2 = self.clf.score(Data.test_set, Data.test_labels)
+        print NumOfEstimators,self.score1, self.score2
+
 # D=Data()
 # f=open('DataClassifiers.pkl','wb')
 # import pickle
@@ -32,3 +40,6 @@ import pickle
 f=open('DataClassifiers.pkl','rb')
 D = pickle.load(f)
 f.close()
+
+for i in range(20,150,10):
+    e=AB(D,i+1)
